@@ -5,6 +5,9 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.koko.constant.JwtConstant;
+import com.koko.exception.CustomException;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -12,25 +15,27 @@ import java.util.Date;
 public class JWTUtil {
 
     // 过期时间5分钟
-    private static final long EXPIRE_TIME = 5 * 60 * 1000;
+    @Value("accessTokenExpireTime")
+    private static String accessTokenExpireTime;
+
+    @Value("encryptJWTKey")
+    private static String encryptJWTKey;
 
     /**
      * 校验token是否正确
      *
      * @param token  密钥
-     * @param secret 用户的密码
      * @return 是否正确
      */
-    public static boolean verify(String token, String username, String secret) {
+    public static boolean verify(String token) {
         try {
+            String secret = getClaim(token, JwtConstant.ACCOUNT) + Base64Util.decodeThrowsException(encryptJWTKey);
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withClaim("username", username)
-                    .build();
+            JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT jwt = verifier.verify(token);
             return true;
-        } catch (Exception exception) {
-            return false;
+        } catch (UnsupportedEncodingException  e) {
+            throw new CustomException("JWT解密出现UnsupportedEncodingException异常:"+e.getMessage());
         }
     }
 
@@ -39,29 +44,35 @@ public class JWTUtil {
      *
      * @return token中包含的用户名
      */
-    public static String getUsername(String token) {
+    public static String getClaim(String token, String claim) {
         try {
             DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("username").asString();
+            return jwt.getClaim(claim).asString();
         } catch (JWTDecodeException e) {
-            return null;
+            throw new CustomException("解密JWT公共信息出现JWTDecodeException异常:"+e.getMessage());
         }
     }
 
     /**
      * 生成签名,5min后过期
      *
-     * @param username 用户名
-     * @param secret   用户的密码
+     * @param account 账户名
+     * @param currentTimeMillis  创建时间
      * @return 加密的token
      */
-    public static String sign(String username, String secret) {
-        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
-        Algorithm algorithm = Algorithm.HMAC256(secret);
-        // 附带username信息
-        return JWT.create()
-                .withClaim("username", username)
-                .withExpiresAt(date)
-                .sign(algorithm);
+    public static String sign(String account, String currentTimeMillis) {
+        try {
+            String secret = account + Base64Util.decodeThrowsException(encryptJWTKey);
+            //此处过期时间为毫秒，所以乘1000
+            Date date = new Date(System.currentTimeMillis() + Long.parseLong(accessTokenExpireTime) * 1000);
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.create()
+                    .withClaim("account", account)
+                    .withClaim("currentTimeMillis",currentTimeMillis)
+                    .withExpiresAt(date)
+                    .sign(algorithm);
+        } catch (UnsupportedEncodingException e) {
+            throw new CustomException("JWT加密出现UnsupportedEncodingException异常:"+e.getMessage());
+        }
     }
 }

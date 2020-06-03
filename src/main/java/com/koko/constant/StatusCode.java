@@ -17,4 +17,8 @@ public class StatusCode {
      * 语义错误
      */
     public static final int ERROR = 400;
+    /**
+     * 未登录
+     */
+    public static final int NOT_LOGIN = 402;
 }

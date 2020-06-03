@@ -1,11 +1,14 @@
 package com.koko.config;
 
+import com.koko.constant.JwtConstant;
+import com.koko.constant.RedisConstant;
 import com.koko.dto.JWTToken;
 import com.koko.entity.Permission;
 import com.koko.entity.Role;
 import com.koko.entity.User;
 import com.koko.service.UserService;
 import com.koko.util.JWTUtil;
+import com.koko.util.RedisClient;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -28,6 +31,9 @@ public class MyRealm extends AuthorizingRealm {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RedisClient redis;
+
     @Override
     public boolean supports(AuthenticationToken token) {
         return token instanceof JWTToken;
@@ -35,7 +41,7 @@ public class MyRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String username = JWTUtil.getUsername(principalCollection.toString());
+        String username = JWTUtil.getClaim(principalCollection.toString(), JwtConstant.ACCOUNT);
         Role role = userService.findRoleByUsername(Integer.valueOf(username));
         List<Permission> permissionList = userService.findPermissionByUsername(Integer.valueOf(username));
         Set<String> permissions = new HashSet<>();
@@ -51,11 +57,17 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String token = (String) authenticationToken.getCredentials();
-        String username = JWTUtil.getUsername(token);
-        User user = userService.findUserByUsername(Integer.valueOf(username));
-        if (JWTUtil.verify(token,username,user.getPassword())){
-            throw new AuthenticationException("username or password error");
+        String account = JWTUtil.getClaim(token,JwtConstant.ACCOUNT);
+        User user = userService.findUserByUsername(Integer.valueOf(account));
+        if (user == null){
+            throw new AuthenticationException("用户不存在！");
         }
-        return new SimpleAuthenticationInfo(token, token, "my_realm");
+        if (JWTUtil.verify(token) && redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
+            String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
+            if (JWTUtil.getClaim(token, JwtConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
+                return new SimpleAuthenticationInfo(token, token ,"myRealm");
+            }
+        }
+        throw new AuthenticationException("令牌过期或不正确");
     }
 }

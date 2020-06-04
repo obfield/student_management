@@ -28,4 +28,8 @@
         on role_permission.permission_id = permission.permission_id
         where user.username = #{username}
     </select>
+
+    <select id="findAll" resultType="User">
+        select * from user
+    </select>
 </mapper>

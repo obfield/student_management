@@ -1,5 +1,7 @@
 package com.koko.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.koko.dao.UserMapper;
 import com.koko.entity.Permission;
 import com.koko.entity.Role;
@@ -29,5 +31,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Permission> findPermissionByUsername(int username) {
         return userMapper.findPermissionByUsername(username);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userMapper.findAll();
+    }
+
+    @Override
+    public Page<User> findAll(int pageNum, int PageSize) {
+        PageHelper.startPage(pageNum, PageSize);
+        return (Page<User>) userMapper.findAll();
     }
 }

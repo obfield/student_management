@@ -38,3 +38,10 @@ config:
   refreshTokenExpireTime: 1800
   #Shiro缓存过期时间 5分钟 5*60
   shiroCacheExpireTime: 300
+
+
+pagehelper:
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+  helper-dialect: mysql

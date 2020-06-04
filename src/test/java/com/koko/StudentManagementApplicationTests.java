@@ -1,8 +1,13 @@
 package com.koko;
 
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.koko.dao.UserMapper;
 import com.koko.entity.Permission;
 import com.koko.entity.Role;
+import com.koko.entity.User;
+import com.koko.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +21,15 @@ import java.util.List;
 class StudentManagementApplicationTests {
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @Test
     void contextLoads() {
-//        Role role = userMapper.findRoleByUsername(2017020155);
-        List<Permission> permissions = userMapper.findPermissionByUsername(2017020155);
-        System.out.println(permissions);
+        List<User> users = userService.findAll();
+//        PageInfo pageInfo = new PageInfo(users);
+//        String string = JSON.toJSONString(pageInfo);
+        String string = JSON.toJSONString(users);
+        System.out.println(string);
     }
 
 }

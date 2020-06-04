@@ -1,4 +1,4 @@
-package com.koko.config;
+package com.koko.config.shiro.cache;
 
 import com.koko.constant.JwtConstant;
 import com.koko.constant.RedisConstant;
@@ -7,10 +7,13 @@ import com.koko.util.RedisClient;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 重写Shiro的Cache保存读取
@@ -19,11 +22,15 @@ import java.util.Set;
  */
 public class CustomCache<K, V> implements Cache<K, V> {
 
+    @Value("${config.shiroCacheExpireTime}")
+    private String shiroCacheExpireTime;
 
-    private String shiroCacheExpireTime = "600";
 
-    @Autowired
-    private RedisClient redis;
+    private RedisTemplate<String, Object> redisTemplate;
+
+    public CustomCache(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 缓存的key名称获取为shiro:cache:account
@@ -42,10 +49,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
      */
     @Override
     public Object get(Object key) throws CacheException {
-        if (!redis.hasKey(this.getKey(key))) {
-            return null;
-        }
-        return redis.get(this.getKey(key));
+        return redisTemplate.opsForValue().get(this.getKey(key));
     }
 
     /**
@@ -58,7 +62,13 @@ public class CustomCache<K, V> implements Cache<K, V> {
         // String shiroCacheExpireTime =
         // PropertiesUtil.getProperty("shiroCacheExpireTime");
         // 设置Redis的Shiro缓存
-        return redis.set(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime));
+        try {
+            redisTemplate.opsForValue().set(this.getKey(key), value, Integer.parseInt(shiroCacheExpireTime), TimeUnit.SECONDS);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -66,10 +76,7 @@ public class CustomCache<K, V> implements Cache<K, V> {
      */
     @Override
     public Object remove(Object key) throws CacheException {
-        if (!redis.hasKey(this.getKey(key))) {
-            return null;
-        }
-        redis.del(this.getKey(key));
+        redisTemplate.delete(this.getKey(key));
         return null;
     }
 
@@ -108,4 +115,27 @@ public class CustomCache<K, V> implements Cache<K, V> {
         // TODO Auto-generated method stub
         return null;
     }
+
+    /*
+     * @Override public void clear() throws CacheException {
+     * redis.getJedis().flushDB(); }
+     */
+
+    /*
+     * @Override public int size() { Long size = JedisUtil.getJedis().dbSize();
+     * return size.intValue(); }
+     */
+
+    /*
+     * @Override public Set keys() { Set<byte[]> keys =
+     * JedisUtil.getJedis().keys(new String("*").getBytes()); Set<Object> set = new
+     * HashSet<Object>(); for (byte[] bs : keys) {
+     * set.add(SerializableUtil.unserializable(bs)); } return set; }
+     */
+
+    /*
+     * @Override public Collection values() { Set keys = this.keys(); List<Object>
+     * values = new ArrayList<Object>(); for (Object key : keys) {
+     * values.add(JedisUtil.getObject(this.getKey(key))); } return values; }
+     */
 }

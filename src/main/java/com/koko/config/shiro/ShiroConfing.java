@@ -1,5 +1,6 @@
-package com.koko.config;
+package com.koko.config.shiro;
 
+import com.koko.config.shiro.cache.CustomCacheManager;
 import com.koko.filter.JwtFilter;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -11,6 +12,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.servlet.Filter;
 import java.util.HashMap;
@@ -24,23 +26,23 @@ public class ShiroConfing {
     }
 
     @Bean("securityManager")
-    public DefaultWebSecurityManager getDefaultWebSecurityManager() {
+    public DefaultWebSecurityManager getDefaultWebSecurityManager(MyRealm realm, RedisTemplate<String, Object> redisTemplate) {
         DefaultWebSecurityManager manager = new DefaultWebSecurityManager();
-        manager.setRealm(getRealm());
+        manager.setRealm(realm);
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator sessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         sessionStorageEvaluator.setSessionStorageEnabled(false);
         subjectDAO.setSessionStorageEvaluator(sessionStorageEvaluator);
         manager.setSubjectDAO(subjectDAO);
-        manager.setCacheManager(new CustomCacheManager());
+        manager.setCacheManager(new CustomCacheManager(redisTemplate));
         return manager;
     }
 
     @Bean("shiroFilter")
-    public ShiroFilterFactoryBean getShiroFilterFactoryBean() {
+    public ShiroFilterFactoryBean getShiroFilterFactoryBean(DefaultWebSecurityManager securityManager) {
         ShiroFilterFactoryBean filter = new ShiroFilterFactoryBean();
         Map<String, Filter> filterMap = new HashMap<>();
-        filter.setSecurityManager(getDefaultWebSecurityManager());
+        filter.setSecurityManager(securityManager);
         filterMap.put("jwtFilter",new JwtFilter());
         filter.setFilters(filterMap);
         Map<String, String> filterRoleMap = new HashMap<>();

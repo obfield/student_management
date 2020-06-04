@@ -21,4 +21,20 @@ spring:
     database: 0
     host: 192.168.1.6
     port: 6379
-    password: 123456
+    password: root
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.koko.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+config:
+  #JWT加密密钥(Base64加密)
+  encryptJWTKey: U0JBUElOENhspJrzkyNjQ1NA
+  #AccessToken过期时间 5分钟 5*60
+  accessTokenExpireTime: 300
+  #RefreshToken过期时间 30分钟 30*60
+  refreshTokenExpireTime: 1800
+  #Shiro缓存过期时间 5分钟 5*60
+  shiroCacheExpireTime: 300

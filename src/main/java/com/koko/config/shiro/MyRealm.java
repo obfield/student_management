@@ -1,4 +1,4 @@
-package com.koko.config;
+package com.koko.config.shiro;
 
 import com.koko.constant.JwtConstant;
 import com.koko.constant.RedisConstant;

@@ -1,24 +1,28 @@
 package com.koko.constant;
 
-public class StatusCode {
+public interface StatusCode {
     /**
      * 非法访问
      */
-    public static final int UNLAWFUL = 401;
+    int UNLAWFUL = 401;
     /**
      * 不存在该页面
      */
-    public static final int NOT_FOUND = 404;
+    int NOT_FOUND = 404;
     /**
      * 服务器错误
      */
-    public static final int SERVER_ERROR = 500;
+    int SERVER_ERROR = 500;
     /**
      * 语义错误
      */
-    public static final int ERROR = 400;
+    int ERROR = 400;
     /**
      * 未登录
      */
-    public static final int NOT_LOGIN = 402;
+    int NOT_LOGIN = 402;
+    /**
+     * 一切正常
+     */
+    int OK = 200;
 }

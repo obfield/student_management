@@ -30,7 +30,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Autowired
     private RedisClient redis;
 
-    @Value("refreshTokenExpireTime")
+    @Value("${config.refreshTokenExpireTime}")
     private String refreshTokenExpireTime;
 
     @Override

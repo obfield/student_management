@@ -47,8 +47,8 @@ public class JWTUtil {
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT jwt = verifier.verify(token);
             return true;
-        } catch (UnsupportedEncodingException e) {
-            throw new CustomException("JWT解密出现UnsupportedEncodingException异常:" + e.getMessage());
+        } catch (Exception e) {
+            throw new CustomException("JWT解密出现异常:" + e.getMessage());
         }
     }
 

@@ -59,10 +59,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 }
                 this.response401(request, response, msg);
                 return false;
-
             }
         }
-
         return true;
     }
 
@@ -93,7 +91,6 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     private Boolean refreshToken(ServletRequest request, ServletResponse response){
         String token = this.getAuthzHeader(request);
         String account = JWTUtil.getClaim(token, JwtConstant.ACCOUNT);
-
         if (redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN +account)){
             String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
             if (JWTUtil.getClaim(token, JwtConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){

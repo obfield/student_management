@@ -62,10 +62,12 @@ public class MyRealm extends AuthorizingRealm {
         if (user == null){
             throw new AuthenticationException("用户不存在！");
         }
-        if (JWTUtil.verify(token) && redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)){
-            String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
-            if (JWTUtil.getClaim(token, JwtConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)){
-                return new SimpleAuthenticationInfo(token, token ,"myRealm");
+        if(JWTUtil.verify(token) ) {
+            if (redis.hasKey(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account)) {
+                String currentTimeMillisRedis = redis.get(RedisConstant.PREFIX_SHIRO_REFRESH_TOKEN + account).toString();
+                if (JWTUtil.getClaim(token, JwtConstant.CURRENT_TIME_MILLIS).equals(currentTimeMillisRedis)) {
+                    return new SimpleAuthenticationInfo(token, token, "myRealm");
+                }
             }
         }
         throw new AuthenticationException("令牌过期或不正确");

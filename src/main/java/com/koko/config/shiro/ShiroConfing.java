@@ -46,6 +46,15 @@ public class ShiroConfing {
         filterMap.put("jwtFilter",new JwtFilter());
         filter.setFilters(filterMap);
         Map<String, String> filterRoleMap = new HashMap<>();
+
+        //放行Swagger2页面，需要放行这些
+        filterRoleMap.put("/swagger-ui.html","anon");
+        filterRoleMap.put("/swagger/**","anon");
+        filterRoleMap.put("/webjars/**", "anon");
+        filterRoleMap.put("/swagger-resources/**","anon");
+        filterRoleMap.put("/v2/**","anon");
+        filterRoleMap.put("/static/**", "anon");
+
         filterRoleMap.put("/**","jwtFilter");
         filter.setFilterChainDefinitionMap(filterRoleMap);
         return filter;

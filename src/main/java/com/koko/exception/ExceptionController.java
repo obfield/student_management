@@ -22,7 +22,7 @@ import java.util.Map;
 public class ExceptionController {
 
     /**
-     * 捕捉所有hiro异常
+     * 捕捉所有shiro异常
      */
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(ShiroException.class)

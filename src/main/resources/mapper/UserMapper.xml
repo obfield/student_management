@@ -3,33 +3,58 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.koko.dao.UserMapper">
-    <select id="findUserByUsername" parameterType="int" resultType="User">
-        select * from user where user.username = #{username}
+    <select id="findUserByAccount" parameterType="int" resultType="User">
+        select * from user where user.account = #{account}
     </select>
 
-    <select id="findRoleByUsername" parameterType="int" resultType="Role">
+    <select id="findRoleByAccount" parameterType="int" resultType="Role">
         select role.role_id,role.role_name from
         user inner join user_role
-        on user.username = user_role.username
+        on user.account = user_role.account
         inner join role
         on user_role.role_id = role.role_id
-        where user.username = #{username}
+        where user.account = #{account}
     </select>
 
-    <select id="findPermissionByUsername" parameterType="int" resultType="Permission">
+    <select id="findPermissionByAccount" parameterType="int" resultType="Permission">
         select permission.permission_id,permission.permission_code,permission.permission_name from
         user inner join user_role
-        on user.username = user_role.username
+        on user.account = user_role.account
         inner join role
         on user_role.role_id = role.role_id
         inner join role_permission
         on role.role_id = role_permission.role_id
         inner join permission
         on role_permission.permission_id = permission.permission_id
-        where user.username = #{username}
+        where user.account = #{account}
     </select>
 
     <select id="findAll" resultType="User">
         select * from user
+    </select>
+
+    <select id="findAllUserByJob" resultType="User" parameterType="int">
+        select user.* from
+        user inner join user_role
+        on user.account = user_role.account
+        inner join role
+        on user_role.role_id = role.role_id
+        where role.role_id = #{job}
+    </select>
+
+    <select id="findSubjectByAccount" resultType="Subject" parameterType="int">
+        select subject.* from
+        user_subject inner join subject
+        on user_subject.subject_id = subject.subject_id
+        where user_subject.account = #{account}
+    </select>
+
+    <select id="findStudentScoreByAccount" resultType="com.koko.dto.StudentScore" parameterType="int">
+        select user.account, user.name, subject.subject_name, grade.score from
+        user inner join grade
+        on user.account = grade.account
+        join subject
+        on grade.subject_id = subject.subject_id
+        where user.account = #{account}
     </select>
 </mapper>

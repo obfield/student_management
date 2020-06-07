@@ -7,7 +7,6 @@ import com.koko.constant.StatusCode;
 import com.koko.dto.ResponseBean;
 import com.koko.entity.User;
 import com.koko.service.UserService;
-import com.koko.service.impl.UserServiceImpl;
 import com.koko.util.JWTUtil;
 import com.koko.util.RedisClient;
 import io.swagger.annotations.Api;
@@ -19,13 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -51,7 +47,7 @@ public class MyController {
     public ResponseBean login(String account, String password, HttpServletResponse response) {
 
         try {
-            User user = userService.findUserByUsername(Integer.parseInt(account));
+            User user = userService.findUserByAccount(Integer.parseInt(account));
             if (user == null || !user.getPassword().equals(password)) {
                 return new ResponseBean(StatusCode.ERROR, "用户名或密码错误", null);
             }

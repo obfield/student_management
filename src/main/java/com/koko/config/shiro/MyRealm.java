@@ -19,12 +19,9 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static java.awt.SystemColor.info;
 
 public class MyRealm extends AuthorizingRealm {
 
@@ -42,8 +39,8 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String username = JWTUtil.getClaim(principalCollection.toString(), JwtConstant.ACCOUNT);
-        Role role = userService.findRoleByUsername(Integer.valueOf(username));
-        List<Permission> permissionList = userService.findPermissionByUsername(Integer.valueOf(username));
+        Role role = userService.findRoleByAccount(Integer.valueOf(username));
+        List<Permission> permissionList = userService.findPermissionByAccount(Integer.valueOf(username));
         Set<String> permissions = new HashSet<>();
         for (Permission permission : permissionList){
             permissions.add(permission.getPermissionCode());
@@ -58,7 +55,7 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String token = (String) authenticationToken.getCredentials();
         String account = JWTUtil.getClaim(token,JwtConstant.ACCOUNT);
-        User user = userService.findUserByUsername(Integer.valueOf(account));
+        User user = userService.findUserByAccount(Integer.valueOf(account));
         if (user == null){
             throw new AuthenticationException("用户不存在！");
         }

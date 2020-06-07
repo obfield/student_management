@@ -3,8 +3,7 @@ package com.koko.entity;
 import lombok.Data;
 
 @Data
-public class Grade {
+public class TeacherSubject {
     private int account;
     private int subjectId;
-    private int score;
 }

@@ -2,8 +2,13 @@ package com.koko.entity;
 
 import lombok.Data;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
+
 @Data
+@Table
 public class Role {
-    private int roleId;
+    @GeneratedValue(generator = "JDBC")
+    private Integer roleId;
     private String roleName;
 }

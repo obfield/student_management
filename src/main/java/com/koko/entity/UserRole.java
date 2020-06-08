@@ -2,8 +2,11 @@ package com.koko.entity;
 
 import lombok.Data;
 
+import javax.persistence.Table;
+
 @Data
+@Table
 public class UserRole {
-    private int account;
-    private int roleId;
+    private Integer account;
+    private Integer roleId;
 }

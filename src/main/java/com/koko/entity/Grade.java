@@ -2,9 +2,12 @@ package com.koko.entity;
 
 import lombok.Data;
 
+import javax.persistence.Table;
+
 @Data
+@Table
 public class Grade {
-    private int account;
-    private int subjectId;
-    private int score;
+    private Integer account;
+    private Integer subjectId;
+    private Integer score;
 }

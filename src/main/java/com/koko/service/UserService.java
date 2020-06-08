@@ -25,4 +25,6 @@ public interface UserService {
     List<Subject> findSubjectByAccount(int account);
 
     List<StudentScore> findStudentScoreByAccount(int account);
+
+    void updateUserByAccount(User user);
 }

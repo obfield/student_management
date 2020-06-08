@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.koko.dao.UserMapper">
+<mapper namespace="com.koko.dao.CommonDao">
     <select id="findUserByAccount" parameterType="int" resultType="User">
         select * from user where user.account = #{account}
     </select>
@@ -57,4 +57,19 @@
         on grade.subject_id = subject.subject_id
         where user.account = #{account}
     </select>
+
+    <update id="updateUserByAccount" parameterType="User">
+        update user set
+        user.password = #{password},
+        user.name = #{name},
+        user.age = #{age},
+        user.sex = #{sex},
+        user.address = #{address},
+        user.avatar = #{avatar}
+        where user.account = #{account}
+    </update>
+
+    <insert id="insertUser" parameterType="User">
+        insert into user values(#{account}, #{password}, #{name}, #{age}, #{sex}, #{address}, #{avatar}, #{passwordSalt});
+    </insert>
 </mapper>

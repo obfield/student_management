@@ -2,8 +2,11 @@ package com.koko.entity;
 
 import lombok.Data;
 
+import javax.persistence.Table;
+
 @Data
+@Table
 public class RolePermission {
-    private int roleId;
-    private int permissionId;
+    private Integer roleId;
+    private Integer permissionId;
 }

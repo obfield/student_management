@@ -2,7 +2,7 @@ package com.koko.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.koko.dao.UserMapper;
+import com.koko.dao.CommonDao;
 import com.koko.dto.StudentScore;
 import com.koko.entity.Permission;
 import com.koko.entity.Role;
@@ -18,46 +18,51 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserMapper userMapper;
+    private CommonDao commonDao;
 
     @Override
     public User findUserByAccount(int account) {
-        return userMapper.findUserByAccount(account);
+        return commonDao.findUserByAccount(account);
     }
 
     @Override
     public Role findRoleByAccount(int account) {
-        return userMapper.findRoleByAccount(account);
+        return commonDao.findRoleByAccount(account);
     }
 
     @Override
     public List<Permission> findPermissionByAccount(int account) {
-        return userMapper.findPermissionByAccount(account);
+        return commonDao.findPermissionByAccount(account);
     }
 
     @Override
     public List<User> findAll() {
-        return userMapper.findAll();
+        return commonDao.findAll();
     }
 
     @Override
     public Page<User> findAll(int pageNum, int PageSize) {
         PageHelper.startPage(pageNum, PageSize);
-        return (Page<User>) userMapper.findAll();
+        return (Page<User>) commonDao.findAll();
     }
 
     @Override
     public List<User> findAllUserByJob(int job) {
-        return userMapper.findAllUserByJob(job);
+        return commonDao.findAllUserByJob(job);
     }
 
     @Override
     public List<Subject> findSubjectByAccount(int account) {
-        return userMapper.findSubjectByAccount(account);
+        return commonDao.findSubjectByAccount(account);
     }
 
     @Override
     public List<StudentScore> findStudentScoreByAccount(int account) {
-        return userMapper.findStudentScoreByAccount(account);
+        return commonDao.findStudentScoreByAccount(account);
+    }
+
+    @Override
+    public void updateUserByAccount(User user) {
+        commonDao.updateUserByAccount(user);
     }
 }

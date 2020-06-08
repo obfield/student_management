@@ -10,7 +10,7 @@ import org.apache.shiro.subject.Subject;
 import java.util.List;
 
 @Mapper
-public interface UserMapper {
+public interface CommonDao {
     User findUserByAccount(int account);
 
     Role findRoleByAccount(int account);
@@ -24,5 +24,9 @@ public interface UserMapper {
     List<Subject> findSubjectByAccount(int account);
 
     List<StudentScore> findStudentScoreByAccount(int account);
+
+    void updateUserByAccount(User user);
+
+    void insertUser(User user);
 
 }

@@ -1,20 +1,15 @@
 package com.koko;
 
-import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageInfo;
-import com.koko.dao.UserMapper;
-import com.koko.dto.StudentScore;
-import com.koko.entity.Permission;
-import com.koko.entity.Role;
-import com.koko.entity.User;
+import com.koko.dao.SubjectDao;
+import com.koko.dao.CommonDao;
+import com.koko.entity.Subject;
 import com.koko.service.UserService;
-import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 
@@ -25,14 +20,19 @@ class StudentManagementApplicationTests {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CommonDao commonDao;
+
+    @Autowired
+    private SubjectDao subjectDao;
+
     @Test
     void contextLoads() {
-        List<User> users = userService.findAll();
-//        PageInfo pageInfo = new PageInfo(users);
-//        String string = JSON.toJSONString(pageInfo);
-//        String string = JSON.toJSONString(users);
-//        System.out.println(string);
-        List<Subject> subjects = userService.findSubjectByAccount(2017020155);
+
+        Example example = new Example(Subject.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("subjectId",2);
+        List<Subject> subjects = subjectDao.selectByExample(example);
         System.out.println(subjects);
     }
 

@@ -2,11 +2,12 @@ package com.koko.config.shiro;
 
 import com.koko.constant.JwtConstant;
 import com.koko.constant.RedisConstant;
+import com.koko.dao.UserDao;
 import com.koko.dto.JWTToken;
 import com.koko.entity.Permission;
 import com.koko.entity.Role;
 import com.koko.entity.User;
-import com.koko.service.UserService;
+import com.koko.service.CommonService;
 import com.koko.util.JWTUtil;
 import com.koko.util.RedisClient;
 import org.apache.shiro.authc.AuthenticationException;
@@ -18,6 +19,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +28,10 @@ import java.util.Set;
 public class MyRealm extends AuthorizingRealm {
 
     @Autowired
-    private UserService userService;
+    private CommonService commonService;
+
+    @Autowired
+    private UserDao userDao;
 
     @Autowired
     private RedisClient redis;
@@ -39,8 +44,8 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String username = JWTUtil.getClaim(principalCollection.toString(), JwtConstant.ACCOUNT);
-        Role role = userService.findRoleByAccount(Integer.valueOf(username));
-        List<Permission> permissionList = userService.findPermissionByAccount(Integer.valueOf(username));
+        Role role = commonService.findRoleByAccount(Integer.valueOf(username));
+        List<Permission> permissionList = commonService.findPermissionByAccount(Integer.valueOf(username));
         Set<String> permissions = new HashSet<>();
         for (Permission permission : permissionList){
             permissions.add(permission.getPermissionCode());
@@ -55,7 +60,11 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String token = (String) authenticationToken.getCredentials();
         String account = JWTUtil.getClaim(token,JwtConstant.ACCOUNT);
-        User user = userService.findUserByAccount(Integer.valueOf(account));
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("account", Integer.valueOf(account));
+        User user = userDao.selectOneByExample(example);
+//        User user = commonService.findUserByAccount(Integer.valueOf(account));
         if (user == null){
             throw new AuthenticationException("用户不存在！");
         }

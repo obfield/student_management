@@ -1,9 +1,11 @@
 package com.koko;
 
+import com.github.pagehelper.Page;
 import com.koko.dao.SubjectDao;
 import com.koko.dao.CommonDao;
 import com.koko.entity.Subject;
-import com.koko.service.UserService;
+import com.koko.entity.User;
+import com.koko.service.CommonService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import java.util.List;
 class StudentManagementApplicationTests {
 
     @Autowired
-    private UserService userService;
+    private CommonService commonService;
 
     @Autowired
     private CommonDao commonDao;
@@ -29,11 +31,14 @@ class StudentManagementApplicationTests {
     @Test
     void contextLoads() {
 
-        Example example = new Example(Subject.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("subjectId",2);
-        List<Subject> subjects = subjectDao.selectByExample(example);
-        System.out.println(subjects);
+//        Example example = new Example(Subject.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("subjectId",2);
+//        List<Subject> subjects = subjectDao.selectByExample(example);
+//        System.out.println(subjects);
+
+        Page<User> users = commonService.findAll(1, 2);
+        System.out.println(users);
     }
 
 }

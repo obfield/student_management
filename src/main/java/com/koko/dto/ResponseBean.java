@@ -13,11 +13,21 @@ public class ResponseBean {
     private String msg;
     private Object data;
 
+    public ResponseBean(int code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
 
     public ResponseBean ok(Object obj) {
         this.code = StatusCode.OK;
-        this.msg = "请求正常";
+        this.msg = "请求成功";
         this.data = obj;
+        return this;
+    }
+    public ResponseBean ok() {
+        this.code = StatusCode.OK;
+        this.msg = "请求成功";
+        this.data = null;
         return this;
     }
 }

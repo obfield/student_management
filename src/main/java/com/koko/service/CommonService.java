@@ -1,4 +1,4 @@
-package com.koko.dao;
+package com.koko.service;
 
 import com.github.pagehelper.Page;
 import com.koko.dto.StudentScore;
@@ -6,16 +6,18 @@ import com.koko.entity.Permission;
 import com.koko.entity.Role;
 import com.koko.entity.Subject;
 import com.koko.entity.User;
-import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-@Mapper
-public interface CommonDao {
+public interface CommonService {
 
     Role findRoleByAccount(int account);
 
     List<Permission> findPermissionByAccount(int account);
+
+    List<User> findAll();
+
+    Page<User> findAll(int pageNum, int pageSize);
 
     List<User> findAllUserByJob(int job);
 
@@ -23,6 +25,5 @@ public interface CommonDao {
 
     List<StudentScore> findStudentScoreByAccount(int account);
 
-    List<StudentScore> findStudentScoreBySubjectName(String subjectName);
-
+    List<StudentScore> findStudentScoreBySubjectName(String StudentName);
 }

@@ -1,15 +1,13 @@
-package com.koko.entity;
+package com.koko.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.NoArgsConstructor;
 
 @Data
-@Table
-public class User {
-    @Id
+@AllArgsConstructor
+@NoArgsConstructor
+public class AddUser {
     private Integer account;
     private String password;
     private String passwordSalt;
@@ -18,4 +16,5 @@ public class User {
     private Integer sex;
     private String address;
     private String avatar;
+    private Integer roleId;
 }

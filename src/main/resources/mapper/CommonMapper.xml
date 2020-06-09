@@ -3,9 +3,6 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.koko.dao.CommonDao">
-    <select id="findUserByAccount" parameterType="int" resultType="User">
-        select * from user where user.account = #{account}
-    </select>
 
     <select id="findRoleByAccount" parameterType="int" resultType="Role">
         select role.role_id,role.role_name from
@@ -29,9 +26,6 @@
         where user.account = #{account}
     </select>
 
-    <select id="findAll" resultType="User">
-        select * from user
-    </select>
 
     <select id="findAllUserByJob" resultType="User" parameterType="int">
         select user.* from
@@ -58,18 +52,13 @@
         where user.account = #{account}
     </select>
 
-    <update id="updateUserByAccount" parameterType="User">
-        update user set
-        user.password = #{password},
-        user.name = #{name},
-        user.age = #{age},
-        user.sex = #{sex},
-        user.address = #{address},
-        user.avatar = #{avatar}
-        where user.account = #{account}
-    </update>
+    <select id="findStudentScoreBySubjectName" resultType="com.koko.dto.StudentScore" parameterType="String">
+        select user.account, user.name, subject.subject_name, grade.score from
+        user inner join grade
+        on user.account = grade.account
+        join subject
+        on grade.subject_id = subject.subject_id
+        where subject.subject_name = #{subjectName}
+    </select>
 
-    <insert id="insertUser" parameterType="User">
-        insert into user values(#{account}, #{password}, #{name}, #{age}, #{sex}, #{address}, #{avatar}, #{passwordSalt});
-    </insert>
 </mapper>
